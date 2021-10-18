@@ -105,7 +105,7 @@ def HTMLparser(config: dict, path, contents: str, upload_map: dict) -> str:
     # Fix my specific work-around of closing all tags which somehow gets
     # broken in the upload process
     contents = contents.replace("</p></div></div></div></div></div>", "")
-    contents = contents.replace("<p></p>", "</p></div></div></div></div></div>")
+    contents = re.sub('</head>[\ \n]*<body>[\ \n]*<p><\/p>', '</head><body></p></div></div></div></div></div>', contents)
 
     # Fix my specific splash fore hero links in the custom style
     exp = r'url\([\'\"]?([^\)\'\"]*splash_fore\.png)[\'\"]?\)'
