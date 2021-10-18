@@ -9,10 +9,10 @@ from pathlib import Path
 import mechanicalsoup
 import yaml
 
-from igem_wikisync.browser import iGEM_login, iGEM_upload_file, iGEM_upload_page
-from igem_wikisync.files import CSSfile, HTMLfile, JSfile, OtherFile
-from igem_wikisync.logger import logger
-from igem_wikisync.parsers import CSSparser, HTMLparser, JSparser
+from .browser import iGEM_login, iGEM_upload_file, iGEM_upload_page
+from .files import CSSfile, HTMLfile, JSfile, OtherFile
+from .logger import logger
+from .parsers import CSSparser, HTMLparser, JSparser
 
 # pylint: disable=too-many-instance-attributes, fixme
 

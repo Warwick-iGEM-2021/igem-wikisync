@@ -2,8 +2,8 @@ import os
 import re
 from pathlib import Path
 
-from igem_wikisync.files import CSSfile, HTMLfile, JSfile
-from igem_wikisync.logger import logger
+from .files import CSSfile, HTMLfile, JSfile
+from .logger import logger
 
 
 def is_relative(url: str) -> bool:

@@ -2,7 +2,7 @@ import re
 
 from bs4 import BeautifulSoup
 
-from igem_wikisync.path import iGEM_URL
+from .path import iGEM_URL
 
 # process HTML files
 
@@ -40,6 +40,8 @@ def HTMLparser(config: dict, path, contents: str, upload_map: dict) -> str:
                ('html', 'manifest'), ('input', 'formaction'), ('source', 'src'),
                ('track', 'src'), ('video', 'poster'), ('video', 'src')]
 
+    data_queries = [('div', 'data-image-src'), ('section', 'data-image-src')]
+
     # TODO: Replace URLs for AJAX loads as well
 
     for (tag_name, attr) in queries:
@@ -48,6 +50,13 @@ def HTMLparser(config: dict, path, contents: str, upload_map: dict) -> str:
         for tag in query:
             tag[attr] = iGEM_URL(config, path, upload_map, tag[attr])
             # TODO: Add error handling
+
+    # Added ability to replace data attributes containing URLs as well, which
+    # then allows support for our parallax data attributes
+    for (tag_name, data_attr) in data_queries:
+        data_query = soup.find_all(tag_name, attrs={data_attr : True})
+        for data in data_query:
+            data[data_attr] = iGEM_URL(config, path, upload_map, data[data_attr])
 
     # srcset queries
     # https://developer.mozilla.org/en-US/docs/Learn/HTML/Multimedia_and_embedding/Responsive_images
@@ -89,6 +98,20 @@ def HTMLparser(config: dict, path, contents: str, upload_map: dict) -> str:
         contents = "{{ Poster }}\n\n" + str(soup)
     else:
         contents = str(soup)
+
+    # Get rid of DOCTYPE since it breaks the iGEM site
+    contents = contents.replace("<!DOCTYPE html>", "")
+
+    # Fix my specific work-around of closing all tags which somehow gets
+    # broken in the upload process
+    contents = contents.replace("</p></div></div></div></div></div>", "")
+    contents = contents.replace("<p></p>", "</p></div></div></div></div></div>")
+
+    # Fix my specific splash fore hero links in the custom style
+    exp = r'url\([\'\"]?([^\)\'\"]*splash_fore\.png)[\'\"]?\)'
+    links = re.findall(exp, contents)
+    for link in links:
+        contents = contents.replace(link, iGEM_URL(config, path, upload_map, link.strip()))
 
     return contents
 

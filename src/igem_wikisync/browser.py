@@ -2,7 +2,7 @@ from datetime import datetime
 
 from bs4 import BeautifulSoup
 
-from igem_wikisync.logger import logger
+from .logger import logger
 
 
 def iGEM_login(browser, credentials: dict, config: dict) -> bool:
